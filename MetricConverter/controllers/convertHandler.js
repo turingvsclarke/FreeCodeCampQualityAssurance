@@ -2,12 +2,22 @@ function ConvertHandler() {
   
   this.getNum = function(input) {
     // Return the first part of the input string
-    return input.match(/^(\d*|\d+\.\d*/)[0];
+    let inputNum=input.match(/^\d*.*\d/);
+    if(inputNum==null){
+      return 1;
+    }else{
+      // Test for fractions 
+      let num=inputNum[0];
+      if(num.indexOf('/')>0){
+        num=num.substring(0,num.indexOf('/'))/num.substring(num.indexOf('/')+1);
+      }
+      return ((num*1)||num==0)?num:'invalid number';
+    }
   };
   
   this.getUnit = function(input) {
     // Return the second part
-    return input.substring(this.getNum(input));
+    return input.match(/[a-zA-Z]*$/)[0];
   };
   
   this.getReturnUnit = function(initUnit) {
@@ -15,15 +25,15 @@ function ConvertHandler() {
       case 'GAL': 
         return 'L';
       case 'L':
-        return 'GAL';
+        return 'gal';
       case 'MI':
-        return 'KM';
+        return 'km';
       case 'LBS':
-        return 'KG';
+        return 'kg';
       case 'KG':
-        return 'LBS';
+        return 'lbs';
       case 'KM':
-        return 'MI';
+        return 'mi';
       default:
         return 'invalid unit';
     }
@@ -52,7 +62,13 @@ function ConvertHandler() {
     const galToL = 3.78541;
     const lbsToKg = 0.453592;
     const miToKm = 1.60934;
-    switch(unit.toUpperCase()){
+    if(initNum==0){
+      return 0;
+    }
+    if(initNum==''){
+      initNum=1;
+    }
+    switch(initUnit.toUpperCase()){
       case 'GAL': 
         return initNum*galToL;
       case 'L':
@@ -71,7 +87,7 @@ function ConvertHandler() {
   };
   
   this.getString = function(initNum, initUnit, returnNum, returnUnit) {
-    return initNum+" "+initUnit+" converts to "+returnNum+" "+returnUnit;
+    return initNum.toFixed(5)+" "+this.spellOutUnit(initUnit)+" converts to "+returnNum.toFixed(5)+" "+this.spellOutUnit(returnUnit);
   };
   
 }
