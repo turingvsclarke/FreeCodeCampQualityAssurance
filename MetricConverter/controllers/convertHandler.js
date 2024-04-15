@@ -17,7 +17,8 @@ function ConvertHandler() {
   
   this.getUnit = function(input) {
     // Return the second part
-    return input.match(/[a-zA-Z]*$/)[0];
+   let inputUnit=input.match(/[a-zA-Z]*$/)[0];
+   return inputUnit.toUpperCase()=='L'?'L':inputUnit.toLowerCase();
   };
   
   this.getReturnUnit = function(initUnit) {
@@ -87,7 +88,7 @@ function ConvertHandler() {
   };
   
   this.getString = function(initNum, initUnit, returnNum, returnUnit) {
-    return initNum.toFixed(5)+" "+this.spellOutUnit(initUnit)+" converts to "+returnNum.toFixed(5)+" "+this.spellOutUnit(returnUnit);
+    return initNum+" "+this.spellOutUnit(initUnit)+" converts to "+returnNum.toFixed(5)+" "+this.spellOutUnit(returnUnit);
   };
   
 }

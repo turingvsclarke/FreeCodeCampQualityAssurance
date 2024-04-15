@@ -29,7 +29,7 @@ module.exports = function (app) {
     const returnNum=convertHandler.convert(inputNum,inputUnit);
     // Get the final string
     const outputString=convertHandler.getString(inputNum,inputUnit,returnNum,outUnit);
-    res.json({ initNum: inputNum.toFixed(5), initUnit: inputUnit.toLowerCase(), returnNum: returnNum.toFixed(5), returnUnit: outUnit, string: outputString });
+    res.json({ initNum: Number(inputNum), initUnit: inputUnit, returnNum: Number(returnNum.toFixed(5)), returnUnit: outUnit, string: outputString });
   })
 };
 
