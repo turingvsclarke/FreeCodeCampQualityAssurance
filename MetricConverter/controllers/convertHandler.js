@@ -2,7 +2,7 @@ function ConvertHandler() {
   
   this.getNum = function(input) {
     // Return the first part of the input string
-    let inputNum=input.match(/^\d*.*\d/);
+    let inputNum=String(input).match(/^\d*.*\d/);
     if(inputNum==null){
       return 1;
     }else{
@@ -11,33 +11,45 @@ function ConvertHandler() {
       if(num.indexOf('/')>0){
         num=num.substring(0,num.indexOf('/'))/num.substring(num.indexOf('/')+1);
       }
-      return ((num*1)||num==0)?num:'invalid number';
-    }
+      if((num*1)||num==0){
+        return Number(Number(num).toFixed(5));
+      }
+      throw new Error('invalid number');
+  }
   };
   
   this.getUnit = function(input) {
     // Return the second part
    let inputUnit=input.match(/[a-zA-Z]*$/)[0];
+   this.getReturnUnit(inputUnit);
    return inputUnit.toUpperCase()=='L'?'L':inputUnit.toLowerCase();
   };
   
   this.getReturnUnit = function(initUnit) {
+    var returnUnit;
     switch(initUnit.toUpperCase()){
       case 'GAL': 
-        return 'L';
+      returnUnit= 'L';
+      break;
       case 'L':
-        return 'gal';
+        returnUnit= 'gal';
+        break;
       case 'MI':
-        return 'km';
+        returnUnit= 'km';
+        break;
       case 'LBS':
-        return 'kg';
+        returnUnit= 'kg';
+        break;
       case 'KG':
-        return 'lbs';
+        returnUnit= 'lbs';
+        break;
       case 'KM':
-        return 'mi';
+        returnUnit= 'mi';
+        break;
       default:
-        return 'invalid unit';
+        throw new Error('invalid unit');
     }
+    return returnUnit;
   };
 
   this.spellOutUnit = function(unit) {
@@ -55,7 +67,7 @@ function ConvertHandler() {
       case 'KM':
         return 'kilometers';
       default:
-        return 'invalid unit';
+        return new Error('invalid unit');
     }
   };
   
@@ -69,26 +81,34 @@ function ConvertHandler() {
     if(initNum==''){
       initNum=1;
     }
+    var output;
     switch(initUnit.toUpperCase()){
       case 'GAL': 
-        return initNum*galToL;
+        output=initNum*galToL;
+        break;
       case 'L':
-        return initNum/galToL;
+        output=initNum/galToL;
+        break;
       case 'MI':
-        return initNum*miToKm;
+        output=initNum*miToKm;
+        break;
       case 'LBS':
-        return initNum*lbsToKg;
+        output=initNum*lbsToKg;
+        break;
       case 'KG':
-        return initNum/lbsToKg;
+        output=initNum/lbsToKg;
+        break;
       case 'KM':
-        return initNum/miToKm;
+        output=initNum/miToKm;
+        break;
       default:
         return 'invalid unit';
     }
+    return Number(output.toFixed(5));
   };
   
   this.getString = function(initNum, initUnit, returnNum, returnUnit) {
-    return initNum+" "+this.spellOutUnit(initUnit)+" converts to "+returnNum.toFixed(5)+" "+this.spellOutUnit(returnUnit);
+    return initNum+" "+this.spellOutUnit(initUnit)+" converts to "+returnNum+" "+this.spellOutUnit(returnUnit);
   };
   
 }

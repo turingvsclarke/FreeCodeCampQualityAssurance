@@ -10,21 +10,31 @@ module.exports = function (app) {
   app.route('/api/convert').get((req,res)=>{
     console.log(req.query.input)
     let inputString=req.query.input;
-    // Get the units
-    const inputUnit=convertHandler.getUnit(inputString);
+    var inputNum,inputUnit;
     // Get the numerical input
-    const inputNum=convertHandler.getNum(inputString);
-    // get the returnUnit
-    const outUnit=convertHandler.getReturnUnit(inputUnit);
-    if(outUnit=="invalid unit"||inputNum=='invalid number'){
-      if(inputNum=='invalid number'){
-        if(outUnit=='invalid unit'){
-          res.send('invalid number and unit');
-        }
-        res.send('invalid number');
-      }
-      res.send('invalid unit');
+    var error;
+    try{
+      inputNum=convertHandler.getNum(inputString);
+    }catch(e){
+      let error=e;
     }
+    // get the units
+    try{
+      inputUnit=convertHandler.getUnit(inputString);
+    }catch(outputError){
+      if(error){
+        error+='and unit';
+      }else{
+        error=outputError;
+      }
+    }
+    if(error){
+      res.send(error);
+    }
+
+    // Get the return unit
+    const returnUnit=convertHandler.getReturnUnit(inputUnit);
+    
     // Get the returnNum
     const returnNum=convertHandler.convert(inputNum,inputUnit);
     // Get the final string
