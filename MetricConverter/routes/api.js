@@ -10,22 +10,23 @@ module.exports = function (app) {
   app.route('/api/convert').get((req,res)=>{
     console.log(req.query.input)
     let inputString=req.query.input;
-    var inputNum,inputUnit;
+    var inputNum;
+    var inputUnit;
     // Get the numerical input
     var error;
     try{
       inputNum=convertHandler.getNum(inputString);
     }catch(e){
-      let error=e;
+      error=e.message;
     }
     // get the units
     try{
       inputUnit=convertHandler.getUnit(inputString);
     }catch(outputError){
       if(error){
-        error+='and unit';
+        error+=' and unit';
       }else{
-        error=outputError;
+        error=outputError.message;
       }
     }
     if(error){
@@ -38,8 +39,8 @@ module.exports = function (app) {
     // Get the returnNum
     const returnNum=convertHandler.convert(inputNum,inputUnit);
     // Get the final string
-    const outputString=convertHandler.getString(inputNum,inputUnit,returnNum,outUnit);
-    res.json({ initNum: Number(inputNum), initUnit: inputUnit, returnNum: Number(returnNum.toFixed(5)), returnUnit: outUnit, string: outputString });
+    const outputString=convertHandler.getString(inputNum,inputUnit,returnNum,returnUnit);
+    res.json({ initNum: Number(inputNum), initUnit: inputUnit, returnNum: Number(returnNum.toFixed(5)), returnUnit: returnUnit, string: outputString });
   })
 };
 
