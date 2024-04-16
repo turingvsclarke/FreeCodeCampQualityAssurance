@@ -19,6 +19,7 @@ suite('Functional Tests', function() {
   * ----[EXAMPLE TEST]----
   * Each test should completely test the response of the API end-point including response status code!
   */
+ /*** 
   test('#example Test GET /api/books', function(done){
      chai.request(server)
       .get('/api/books')
@@ -40,12 +41,20 @@ suite('Functional Tests', function() {
 
     suite('POST /api/books with title => create book object/expect book object', function() {
       
+      // Test 1
       test('Test POST /api/books with title', function(done) {
-        //done();
+        chai.request(server).keepOpen().post('/api/books').send('New Book').end(function(err,res){
+          assert.containsAllKeys(res.body,['title','_id'],'all keys present')
+        });
+        done();
       });
       
+      // Test 2
       test('Test POST /api/books with no title given', function(done) {
-        //done();
+        chai.request(server).keepOpen().post('/api/books').end(function(err,res){
+          assert.equal(res.body,'missing required field title','No title given')
+        });
+        done();
       });
       
     });
@@ -53,21 +62,36 @@ suite('Functional Tests', function() {
 
     suite('GET /api/books => array of books', function(){
       
+      // Test 3
       test('Test GET /api/books',  function(done){
-        //done();
+        chai.request(server).keepOpen().get('/api/books').end(function(err,res){
+          assert.isArray(res.body,'Array returned')
+          res.body.forEach(book=>{
+            assert.containsAllKeys(book,['title','_id','commentcount']);
+          });
+        });
+        done();
       });      
       
     });
 
 
     suite('GET /api/books/[id] => book object with [id]', function(){
-      
+      // Test 4
       test('Test GET /api/books/[id] with id not in db',  function(done){
-        //done();
+        chai.request(server).keepOpen().get('/api/books/hi').end(function(err,res){
+          assert.equal(res.body,'no book exists','No id correctly flagged');
+        });
+        done();
       });
       
+      // Test 5
       test('Test GET /api/books/[id] with valid id in db',  function(done){
-        //done();
+        chai.request(server).keepOpen().get('/api/books/1').end(function(err,res){
+          assert.isArray(res.body.comments,'Array returned')
+          assert.containsAllKeys(res.body,['title','_id','comments']);
+        });
+        done();
       });
       
     });
@@ -75,16 +99,28 @@ suite('Functional Tests', function() {
 
     suite('POST /api/books/[id] => add comment/expect book object with id', function(){
       
+      // Test 6
       test('Test POST /api/books/[id] with comment', function(done){
-        //done();
+        chai.request(server).keepOpen().post('/api/books/1').send('comment message').end(function(err,res){
+          assert.isArray(res.body.comments,'Array returned')
+          assert.containsAllKeys(res.body,['title','_id','comments']);
+        });
+        done();
       });
 
       test('Test POST /api/books/[id] without comment field', function(done){
-        //done();
+        chai.request(server).keepOpen().post('/api/books/1').end(function(err,res){
+          assert.equal(res.body,'missing required field comment','No comment correctly flagged');
+        });
+        done();
       });
 
+      // Test 8
       test('Test POST /api/books/[id] with comment, id not in db', function(done){
-        //done();
+        chai.request(server).keepOpen().post('/api/books/hi').send('comment message').end(function(err,res){
+          assert.equal(res.body,'no book exists','No id correctly flagged');
+        });
+        done();
       });
       
     });
@@ -92,11 +128,17 @@ suite('Functional Tests', function() {
     suite('DELETE /api/books/[id] => delete book object id', function() {
 
       test('Test DELETE /api/books/[id] with valid id in db', function(done){
-        //done();
+        chai.request(server).keepOpen().post('/api/books/1').end(function(err,res){
+          assert.equal(res.body,'delete successful','Deleted book successfully');
+        });
+        done();
       });
 
       test('Test DELETE /api/books/[id] with  id not in db', function(done){
-        //done();
+        chai.request(server).keepOpen().delete('/api/books/hi').end(function(err,res){
+          assert.equal(res.body,'no book exists','No id correctly flagged');
+        });
+        done();
       });
 
     });
